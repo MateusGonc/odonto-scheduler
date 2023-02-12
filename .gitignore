@@ -31,4 +31,8 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
+<<<<<<< HEAD
 .vscode/
+=======
+.vscode/
+>>>>>>> 5620a93 (ESPM-27 create first project structure)
