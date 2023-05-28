@@ -15,14 +15,16 @@ public class Patient extends BaseEntity {
     @Id
     private String id;
 
-    private String name;
-
-    @Indexed(unique=true)
+    @Indexed(unique = true)
     private String document;
-    @Indexed(unique=true)
+
+    @Indexed(unique = true)
     private String phoneNumber;
-    @Indexed(unique=true)
+
+    @Indexed(unique = true)
     private String email;
+
+    private String name;
     private int age;
     private Address address;
 }

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController("/appointment")
-public class AppointmentController extends AbstractController<Appointment, AppointmentService>{
+public class AppointmentController extends AbstractController<Appointment, AppointmentService> {
 
     private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
@@ -29,21 +29,26 @@ public class AppointmentController extends AbstractController<Appointment, Appoi
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Appointment appointment){
+    public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id,
+            @RequestBody Appointment appointment) {
         BaseResponse baseResponse = null;
-        try{
+        
+        try {
             logger.info("updating " + appointment.toString());
             boolean updated = this.getService().updateAppointment(id, appointment);
-            if(updated){
+
+            if (updated) {
                 baseResponse = new BaseResponse(BaseResponse.MESSAGE_SUCCESS + id, HttpStatus.OK.toString());
                 return new ResponseEntity<>(baseResponse, HttpStatus.OK);
             }
+
             baseResponse = new BaseResponse(BaseResponse.MESSAGE_NOT_FOUND + id, HttpStatus.NOT_FOUND.toString());
             return new ResponseEntity<>(baseResponse, HttpStatus.NOT_FOUND);
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.info("Erro updating " + appointment.toString() + " " + e);
             baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR,
                     HttpStatus.BAD_REQUEST.toString());
+
             return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
         }
     }

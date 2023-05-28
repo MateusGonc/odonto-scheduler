@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class PatientService extends AbstractService<Patient, PatientRepository>{
+public class PatientService extends AbstractService<Patient, PatientRepository> {
 
     private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
 
@@ -23,9 +23,10 @@ public class PatientService extends AbstractService<Patient, PatientRepository>{
         return this.patientRepository;
     }
 
-    public boolean updatePatient(String id, Patient patient){
+    public boolean updatePatient(String id, Patient patient) {
         Optional<Patient> optionalPatient = this.patientRepository.findById(id);
-        if(optionalPatient.isPresent()){
+
+        if (optionalPatient.isPresent()) {
             Patient currentPatient = optionalPatient.get();
             currentPatient.setUpdatedAt(LocalDateTime.now());
             currentPatient.setAge(patient.getAge());
@@ -35,9 +36,12 @@ public class PatientService extends AbstractService<Patient, PatientRepository>{
             currentPatient.setDocument(patient.getDocument());
             currentPatient.setPhoneNumber(patient.getPhoneNumber());
             currentPatient.setName(patient.getName());
+
             this.patientRepository.save(currentPatient);
+            
             return true;
         }
+
         return false;
     }
 }

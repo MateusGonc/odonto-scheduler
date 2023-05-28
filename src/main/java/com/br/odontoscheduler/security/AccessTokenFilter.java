@@ -26,18 +26,22 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     private UserService userService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
             Optional<String> accessToken = parseAccessToken(request);
-            if(accessToken.isPresent() && jwtHelper.validateAccessToken(accessToken.get())) {
+
+            if (accessToken.isPresent() && jwtHelper.validateAccessToken(accessToken.get())) {
                 String userId = jwtHelper.getUserIdFromAccessToken(accessToken.get());
                 Optional<User> opUser = userService.findById(userId);
                 User user = null;
-                if(opUser.isPresent()){
+
+                if (opUser.isPresent()) {
                     user = opUser.get();
                 }
 
-                UsernamePasswordAuthenticationToken passAuth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                UsernamePasswordAuthenticationToken passAuth = new UsernamePasswordAuthenticationToken(user, null,
+                        user.getAuthorities());
                 passAuth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(passAuth);
             }
@@ -50,9 +54,11 @@ public class AccessTokenFilter extends OncePerRequestFilter {
 
     private Optional<String> parseAccessToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
-        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
+
+        if (StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
             return Optional.of(authHeader.replace("Bearer ", ""));
         }
+
         return Optional.empty();
     }
 }

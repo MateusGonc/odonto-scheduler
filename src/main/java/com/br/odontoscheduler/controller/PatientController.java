@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/patient")
-public class PatientController extends AbstractController<Patient, PatientService>{
+public class PatientController extends AbstractController<Patient, PatientService> {
     private static final Logger logger = LoggerFactory.getLogger(PatientController.class);
 
     @Autowired
@@ -26,21 +26,26 @@ public class PatientController extends AbstractController<Patient, PatientServic
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id, @RequestBody Patient patient){
+    public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id,
+            @RequestBody Patient patient) {
         BaseResponse baseResponse = null;
-        try{
+
+        try {
             logger.info("updating " + patient.toString());
             boolean updated = this.getService().updatePatient(id, patient);
-            if(updated){
+
+            if (updated) {
                 baseResponse = new BaseResponse(BaseResponse.MESSAGE_SUCCESS + id, HttpStatus.OK.toString());
                 return new ResponseEntity<>(baseResponse, HttpStatus.OK);
             }
+
             baseResponse = new BaseResponse(BaseResponse.MESSAGE_NOT_FOUND + id, HttpStatus.NOT_FOUND.toString());
             return new ResponseEntity<>(baseResponse, HttpStatus.NOT_FOUND);
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.info("Erro saving " + patient.toString() + " " + e);
             baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR,
                     HttpStatus.BAD_REQUEST.toString());
+
             return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
         }
     }

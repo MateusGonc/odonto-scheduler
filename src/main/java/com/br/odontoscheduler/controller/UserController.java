@@ -23,25 +23,27 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody User user){
-        try{
+    public ResponseEntity<?> save(@RequestBody User user) {
+        try {
             return new ResponseEntity<>(this.userService.save(user), HttpStatus.CREATED);
-        } catch (Exception e){
+        } catch (Exception e) {
             logger.info("Erro saving patient " + user.getDocument() + " " + e);
-
         }
+
         return new ResponseEntity<>("User had errors to save.", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@AuthenticationPrincipal User user, @PathVariable String id){
-        try{
+    public ResponseEntity<?> getUser(@AuthenticationPrincipal User user, @PathVariable String id) {
+        try {
             Optional<User> opUser = userService.findById(id);
-            if (opUser.isPresent()){
+
+            if (opUser.isPresent()) {
                 return ResponseEntity.ok(opUser.get());
             }
+
             return ResponseEntity.notFound().build();
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>("User had errors to save.", HttpStatus.BAD_REQUEST);
         }
     }

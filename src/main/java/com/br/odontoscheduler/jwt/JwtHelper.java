@@ -29,7 +29,10 @@ public class JwtHelper {
     private JWTVerifier accessTokenVerifier;
     private JWTVerifier refreshTokenVerifier;
 
-    public JwtHelper(@Value("${accessTokenSecret}") String accessTokenSecret, @Value("${refreshTokenSecret}") String refreshTokenSecret, @Value("${refreshTokenExpirationDays}") int refreshTokenExpirationDays, @Value("${accessTokenExpirationMinutes}") int accessTokenExpirationMinutes) {
+    public JwtHelper(@Value("${accessTokenSecret}") String accessTokenSecret,
+            @Value("${refreshTokenSecret}") String refreshTokenSecret,
+            @Value("${refreshTokenExpirationDays}") int refreshTokenExpirationDays,
+            @Value("${accessTokenExpirationMinutes}") int accessTokenExpirationMinutes) {
         accessTokenExpirationMs = (long) accessTokenExpirationMinutes * 60 * 1000;
         refreshTokenExpirationMs = (long) refreshTokenExpirationDays * 24 * 60 * 60 * 1000;
         accessTokenAlgorithm = Algorithm.HMAC512(accessTokenSecret);
@@ -67,6 +70,7 @@ public class JwtHelper {
         } catch (JWTVerificationException e) {
             logger.error("", e);
         }
+
         return Optional.empty();
     }
 
@@ -76,6 +80,7 @@ public class JwtHelper {
         } catch (JWTVerificationException e) {
             logger.error("invalid refresh token", e);
         }
+
         return Optional.empty();
     }
 

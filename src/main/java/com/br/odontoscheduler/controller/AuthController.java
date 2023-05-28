@@ -31,21 +31,27 @@ import java.util.Optional;
 public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
+
     @Autowired
     private PatientRepository patientRepository;
+
     @Autowired
     private JwtHelper jwtHelper;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private UserService userService;
 
     @PostMapping("/login")
     @Transactional
     public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = (User) authentication.getPrincipal();
 
@@ -79,7 +85,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody TokenDTO dto) {
         String refreshTokenString = dto.getRefreshToken();
-        if (jwtHelper.validateRefreshToken(refreshTokenString) && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
+
+        if (jwtHelper.validateRefreshToken(refreshTokenString)
+                && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
             // valid and exists in db
             refreshTokenRepository.deleteById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString));
             return ResponseEntity.ok().build();
@@ -91,7 +99,9 @@ public class AuthController {
     @PostMapping("/logout-all")
     public ResponseEntity<?> logoutAll(@RequestBody TokenDTO dto) {
         String refreshTokenString = dto.getRefreshToken();
-        if (jwtHelper.validateRefreshToken(refreshTokenString) && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
+
+        if (jwtHelper.validateRefreshToken(refreshTokenString)
+                && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
             // valid and exists in db
 
             refreshTokenRepository.deleteByOwner_Id(jwtHelper.getUserIdFromRefreshToken(refreshTokenString));
@@ -104,11 +114,14 @@ public class AuthController {
     @PostMapping("/access-token")
     public ResponseEntity<?> accessToken(@RequestBody TokenDTO dto) {
         String refreshTokenString = dto.getRefreshToken();
-        if (jwtHelper.validateRefreshToken(refreshTokenString) && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
+
+        if (jwtHelper.validateRefreshToken(refreshTokenString)
+                && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
             // valid and exists in db
             Optional<User> opUser = userService.findById(jwtHelper.getUserIdFromRefreshToken(refreshTokenString));
             User user = opUser.isPresent() ? opUser.get() : null;
             String accessToken = null;
+
             if (user != null) {
                 accessToken = jwtHelper.generateAccessToken(user);
             } else {
@@ -123,7 +136,9 @@ public class AuthController {
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshToken(@RequestBody TokenDTO dto) {
         String refreshTokenString = dto.getRefreshToken();
-        if (jwtHelper.validateRefreshToken(refreshTokenString) && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
+
+        if (jwtHelper.validateRefreshToken(refreshTokenString)
+                && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
             // valid and exists in db
 
             refreshTokenRepository.deleteById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString));
@@ -131,7 +146,7 @@ public class AuthController {
             Optional<User> opUser = userService.findById(jwtHelper.getUserIdFromRefreshToken(refreshTokenString));
             User user = opUser.isPresent() ? opUser.get() : null;
 
-            if(user == null){
+            if (user == null) {
                 throw new BadCredentialsException("invalid token");
             }
 

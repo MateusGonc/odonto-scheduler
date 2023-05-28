@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-public class AppointmentService extends AbstractService<Appointment, AppointmentRepository>{
+public class AppointmentService extends AbstractService<Appointment, AppointmentRepository> {
 
     private static final Logger logger = LoggerFactory.getLogger(PatientService.class);
 
@@ -23,9 +23,10 @@ public class AppointmentService extends AbstractService<Appointment, Appointment
         return this.appointmentRepository;
     }
 
-    public boolean updateAppointment(String id, Appointment appointment){
+    public boolean updateAppointment(String id, Appointment appointment) {
         Optional<Appointment> optionalAppointment = this.appointmentRepository.findById(id);
-        if(optionalAppointment.isPresent()){
+
+        if (optionalAppointment.isPresent()) {
             Appointment currentAppointment = optionalAppointment.get();
             currentAppointment.setUpdatedAt(LocalDateTime.now());
             currentAppointment.setPatient(appointment.getPatient());
@@ -34,6 +35,7 @@ public class AppointmentService extends AbstractService<Appointment, Appointment
             this.appointmentRepository.save(currentAppointment);
             return true;
         }
+
         return false;
     }
 }
