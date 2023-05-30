@@ -1,38 +1,41 @@
 package com.br.odontoscheduler.controller;
 
 import com.br.odontoscheduler.dto.BaseResponse;
-import com.br.odontoscheduler.model.Patient;
+import com.br.odontoscheduler.model.Appointment;
 import com.br.odontoscheduler.model.User;
-import com.br.odontoscheduler.service.PatientService;
+import com.br.odontoscheduler.service.AppointmentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/patient")
-public class PatientController extends AbstractController<Patient, PatientService> {
-    private static final Logger logger = LoggerFactory.getLogger(PatientController.class);
+@RestController("/appointment")
+public class AppointmentController extends AbstractController<Appointment, AppointmentService> {
+
+    private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);
 
     @Autowired
-    private PatientService patientService;
+    private AppointmentService appointmentService;
 
     @Override
-    public PatientService getService() {
-        return this.patientService;
+    public AppointmentService getService() {
+        return this.appointmentService;
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id,
-            @RequestBody Patient patient) {
+            @RequestBody Appointment appointment) {
         BaseResponse baseResponse = null;
-
+        
         try {
-            logger.info("updating " + patient.toString());
-            boolean updated = this.getService().updatePatient(id, patient);
+            logger.info("updating " + appointment.toString());
+            boolean updated = this.getService().updateAppointment(id, appointment);
 
             if (updated) {
                 baseResponse = new BaseResponse(BaseResponse.MESSAGE_SUCCESS + id, HttpStatus.OK.toString());
@@ -42,7 +45,7 @@ public class PatientController extends AbstractController<Patient, PatientServic
             baseResponse = new BaseResponse(BaseResponse.MESSAGE_NOT_FOUND + id, HttpStatus.NOT_FOUND.toString());
             return new ResponseEntity<>(baseResponse, HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            logger.info("Erro saving " + patient.toString() + " " + e);
+            logger.info("Erro updating " + appointment.toString() + " " + e);
             baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR,
                     HttpStatus.BAD_REQUEST.toString());
 
