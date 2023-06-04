@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.br.odontoscheduler.dto.TokenDTO;
 import com.br.odontoscheduler.model.RefreshToken;
 import com.br.odontoscheduler.model.User;
 import org.slf4j.Logger;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -45,23 +48,38 @@ public class JwtHelper {
                 .build();
     }
 
-    public String generateAccessToken(User user) {
-        return JWT.create()
+    public TokenDTO generateAccessToken(User user, Date date) {
+        date = new Date((date).getTime() + accessTokenExpirationMs);
+
+        String accessToken = JWT.create()
                 .withIssuer(ISSUER)
                 .withSubject(user.getId())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(new Date().getTime() + accessTokenExpirationMs))
+                .withExpiresAt(date)
                 .sign(accessTokenAlgorithm);
+
+        TokenDTO tokenDTO = new TokenDTO();
+        tokenDTO.setAccessToken(accessToken);
+        tokenDTO.setAccessTokenExpiresIn(date);
+
+        return tokenDTO;
     }
 
-    public String generateRefreshToken(User user, RefreshToken refreshToken) {
-        return JWT.create()
+    public TokenDTO generateRefreshToken(User user, RefreshToken refreshToken, Date date, TokenDTO tokenDTO) {
+        date = new Date((date).getTime() + refreshTokenExpirationMs);
+
+        String newRefreshToken = JWT.create()
                 .withIssuer(ISSUER)
                 .withSubject(user.getId())
                 .withClaim("tokenId", refreshToken.getId())
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date((new Date()).getTime() + refreshTokenExpirationMs))
+                .withExpiresAt(date)
                 .sign(refreshTokenAlgorithm);
+
+        tokenDTO.setRefreshToken(newRefreshToken);
+        tokenDTO.setRefreshTokenExpiresIn(date);
+
+        return tokenDTO;
     }
 
     private Optional<DecodedJWT> decodeAccessToken(String token) {
@@ -102,5 +120,23 @@ public class JwtHelper {
 
     public String getTokenIdFromRefreshToken(String token) {
         return decodeRefreshToken(token).get().getClaim("tokenId").asString();
+    }
+
+    public Date recoveryRefreshTokenExpiryDate(String token){
+        if(decodeRefreshToken(token).isPresent()){
+            DecodedJWT jwt = decodeRefreshToken(token).get();
+            return jwt.getExpiresAt();
+        }
+        return new Date();
+    }
+
+    public TokenDTO fillTokenDTO(User user, RefreshToken refreshToken){
+        Date now = new Date();
+
+        TokenDTO tokenDTO = this.generateAccessToken(user, now);
+        tokenDTO = this.generateRefreshToken(user, refreshToken, now, tokenDTO);
+        tokenDTO.setUsername(user.getUsername());
+
+        return tokenDTO;
     }
 }

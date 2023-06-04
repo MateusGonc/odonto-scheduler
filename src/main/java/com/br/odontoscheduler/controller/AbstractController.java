@@ -2,13 +2,11 @@ package com.br.odontoscheduler.controller;
 
 import com.br.odontoscheduler.dto.BaseEntity;
 import com.br.odontoscheduler.dto.BaseResponse;
-import com.br.odontoscheduler.model.User;
 import com.br.odontoscheduler.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -21,9 +19,8 @@ public abstract class AbstractController<S extends BaseEntity, T extends Abstrac
     public abstract T getService();
 
     @GetMapping
-    public ResponseEntity<?> getAll(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> getAll() {
         try {
-            logger.info(user.getName());
             List<S> objectList = this.getService().findAll();
 
             return new ResponseEntity<>(objectList, HttpStatus.OK);
@@ -37,7 +34,7 @@ public abstract class AbstractController<S extends BaseEntity, T extends Abstrac
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@AuthenticationPrincipal User user, @PathVariable String id) {
+    public ResponseEntity<?> getById(@PathVariable String id) {
         BaseResponse baseResponse = null;
 
         try {
@@ -61,7 +58,7 @@ public abstract class AbstractController<S extends BaseEntity, T extends Abstrac
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@AuthenticationPrincipal User user, @RequestBody S object) {
+    public ResponseEntity<?> save(@RequestBody S object) {
         try {
             logger.info("saving " + object.toString());
             object.setCreatedAt(LocalDateTime.now());
@@ -77,7 +74,7 @@ public abstract class AbstractController<S extends BaseEntity, T extends Abstrac
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@AuthenticationPrincipal User user, @PathVariable String id) {
+    public ResponseEntity<?> delete(@PathVariable String id) {
         BaseResponse baseResponse = null;
 
         try {

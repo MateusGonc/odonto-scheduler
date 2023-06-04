@@ -26,27 +26,19 @@ public class PatientController extends AbstractController<Patient, PatientServic
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id,
+    public ResponseEntity<BaseResponse> update(@AuthenticationPrincipal User user, @PathVariable String id,
             @RequestBody Patient patient) {
         BaseResponse baseResponse = null;
 
-        try {
-            logger.info("updating " + patient.toString());
-            boolean updated = this.getService().updatePatient(id, patient);
+        logger.info("updating " + patient.toString());
+        boolean updated = this.getService().updatePatient(id, patient);
 
-            if (updated) {
-                baseResponse = new BaseResponse(BaseResponse.MESSAGE_SUCCESS + id, HttpStatus.OK.toString());
-                return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-            }
-
-            baseResponse = new BaseResponse(BaseResponse.MESSAGE_NOT_FOUND + id, HttpStatus.NOT_FOUND.toString());
-            return new ResponseEntity<>(baseResponse, HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            logger.info("Erro saving " + patient.toString() + " " + e);
-            baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR,
-                    HttpStatus.BAD_REQUEST.toString());
-
-            return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
+        if (updated) {
+            baseResponse = new BaseResponse(BaseResponse.MESSAGE_SUCCESS + id, HttpStatus.OK.toString());
+            return new ResponseEntity<>(baseResponse, HttpStatus.OK);
         }
+
+        baseResponse = new BaseResponse(BaseResponse.MESSAGE_NOT_FOUND + id, HttpStatus.NOT_FOUND.toString());
+        return new ResponseEntity<>(baseResponse, HttpStatus.NOT_FOUND);
     }
 }
