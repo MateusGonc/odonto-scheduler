@@ -29,7 +29,7 @@ public class AppointmentController extends AbstractController<Appointment, Appoi
     }
 
     @PutMapping
-    public ResponseEntity<?> update(@AuthenticationPrincipal User user, @PathVariable String id,
+    public ResponseEntity<BaseResponse> update(@PathVariable String id,
             @RequestBody Appointment appointment) {
         BaseResponse baseResponse = null;
         
