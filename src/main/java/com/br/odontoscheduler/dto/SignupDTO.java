@@ -13,15 +13,9 @@ public class SignupDTO {
     private String username;
 
     @NotBlank
-    @Size(max = 60)
-    @Email
-    private String email;
-
-    @NotBlank
     @Size(min = 8, max = 30)
     private String password;
 
-    private String name;
-    private String document;
-    private String phoneNumber;
+    @NotBlank
+    private String fullName;
 }

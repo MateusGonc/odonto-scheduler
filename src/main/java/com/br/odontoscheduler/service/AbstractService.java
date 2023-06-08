@@ -1,5 +1,8 @@
 package com.br.odontoscheduler.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
@@ -13,8 +16,9 @@ public abstract class AbstractService<T, S extends MongoRepository<T, String>> {
         return this.getRepository().save(entity);
     }
 
-    public List<T> findAll() {
-        return this.getRepository().findAll();
+    public Page<T> findAll(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return this.getRepository().findAll(pageable);
     }
 
     public Optional<T> findById(String id) {

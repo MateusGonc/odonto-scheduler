@@ -1,6 +1,6 @@
 package com.br.odontoscheduler.model;
 
-import com.br.odontoscheduler.dto.BaseEntity;
+import com.br.odontoscheduler.model.base.BaseEntity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

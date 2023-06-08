@@ -1,10 +1,10 @@
 package com.br.odontoscheduler.controller;
 
-import com.br.odontoscheduler.dto.BaseEntity;
-import com.br.odontoscheduler.dto.BaseResponse;
+import com.br.odontoscheduler.model.base.BaseEntity;
 import com.br.odontoscheduler.service.AbstractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,75 +19,40 @@ public abstract class AbstractController<S extends BaseEntity, T extends Abstrac
     public abstract T getService();
 
     @GetMapping
-    public ResponseEntity<?> getAll() {
-        try {
-            List<S> objectList = this.getService().findAll();
+    public ResponseEntity<List<S>> getAll(@RequestParam(defaultValue = "0") int page,
+                                          @RequestParam(defaultValue = "10") int size) {
+        Page<S> objectPage = this.getService().findAll(page, size);
 
-            return new ResponseEntity<>(objectList, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.info("Erro getting all " + e);
-            BaseResponse baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR,
-                    HttpStatus.BAD_REQUEST.toString());
+        List<S> objectList = objectPage.getContent();
 
-            return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<List<S>>(objectList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable String id) {
-        BaseResponse baseResponse = null;
+    public ResponseEntity<S> getById(@PathVariable String id) {
+        logger.info("getting " + id);
+        Optional<S> optionalObj = this.getService().findById(id);
 
-        try {
-            logger.info("getting " + id);
-            Optional<S> optionalObj = this.getService().findById(id);
-
-            if (optionalObj.isPresent()) {
-                return new ResponseEntity<>(optionalObj.get(), HttpStatus.OK);
-            }
-
-            baseResponse = new BaseResponse(BaseResponse.MESSAGE_NOT_FOUND + id, HttpStatus.NOT_FOUND.toString());
-
-            return new ResponseEntity<>(baseResponse, HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            logger.info("Erro getting " + id + " " + e);
-            baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR + id,
-                    HttpStatus.BAD_REQUEST.toString());
-
-            return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
+        if (optionalObj.isPresent()) {
+            return new ResponseEntity<S>(optionalObj.get(), HttpStatus.OK);
         }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody S object) {
-        try {
-            logger.info("saving " + object.toString());
-            object.setCreatedAt(LocalDateTime.now());
+    public ResponseEntity<S> save(@RequestBody S object) {
+        logger.info("saving " + object.toString());
+        object.setCreatedAt(LocalDateTime.now());
 
-            return new ResponseEntity<>(this.getService().save(object), HttpStatus.CREATED);
-        } catch (Exception e) {
-            logger.info("Erro saving " + object.toString() + " " + e);
-            BaseResponse baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR,
-                    HttpStatus.BAD_REQUEST.toString());
-
-            return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<S>((S) this.getService().save(object), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable String id) {
-        BaseResponse baseResponse = null;
+    public ResponseEntity delete(@PathVariable String id) {
+        logger.info("deleting " + id);
+        this.getService().delete(id);
 
-        try {
-            logger.info("deleting " + id);
-            this.getService().delete(id);
-            baseResponse = new BaseResponse(BaseResponse.MESSAGE_SUCCESS + id, HttpStatus.OK.toString());
-
-            return new ResponseEntity<>(baseResponse, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.info("Erro deleting " + id + " " + e);
-            baseResponse = new BaseResponse(BaseResponse.MESSAGE_ERROR + id, HttpStatus.BAD_REQUEST.toString());
-
-            return new ResponseEntity<>(baseResponse, HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok().build();
     }
 }

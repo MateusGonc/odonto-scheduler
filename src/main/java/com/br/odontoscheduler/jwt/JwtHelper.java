@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 @Component
@@ -136,6 +134,7 @@ public class JwtHelper {
         TokenDTO tokenDTO = this.generateAccessToken(user, now);
         tokenDTO = this.generateRefreshToken(user, refreshToken, now, tokenDTO);
         tokenDTO.setUsername(user.getUsername());
+        tokenDTO.setUserId(user.getId());
 
         return tokenDTO;
     }
