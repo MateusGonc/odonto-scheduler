@@ -10,6 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TokenDTO {
+    private String userId;
     private String username;
     private String accessToken;
     private String refreshToken;

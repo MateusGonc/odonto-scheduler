@@ -1,5 +1,6 @@
 package com.br.odontoscheduler.model;
 
+import com.br.odontoscheduler.model.base.BaseEntity;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,26 +13,19 @@ import java.util.Collections;
 
 @Data
 @Document
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
     @Id
     private String id;
 
+    @Indexed(unique = true)
     private String username;
     private String password;
-    private String name;
-    private String document;
-    private String phoneNumber;
+    private String fullName;
 
-    @Indexed(unique = true)
-    private String email;
-
-    public User(String username, String password, String name, String document, String phoneNumber, String email) {
+    public User(String username, String password, String fullName) {
         this.username = username;
         this.password = password;
-        this.name = name;
-        this.document = document;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
+        this.fullName = fullName;
     }
 
     @Override

@@ -72,7 +72,7 @@ public class AuthController {
     @Transactional
     public ResponseEntity<TokenDTO> signup(@Valid @RequestBody SignupDTO dto) {
         User user = new User(dto.getUsername(), passwordEncoder.encode(dto.getPassword()),
-                dto.getName(), dto.getDocument(), dto.getPhoneNumber(), dto.getEmail());
+                dto.getFullName());
         user = userService.save(user);
 
         RefreshToken refreshToken = new RefreshToken();
@@ -85,27 +85,12 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody TokenDTO dto) {
+    public ResponseEntity logout(@RequestBody TokenDTO dto) {
         String refreshTokenString = dto.getRefreshToken();
 
         if (jwtHelper.validateRefreshToken(refreshTokenString)
                 && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
             // valid and exists in db
-            refreshTokenRepository.deleteById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString));
-            return ResponseEntity.ok().build();
-        }
-
-        throw new BadCredentialsException("invalid token");
-    }
-
-    @PostMapping("/logout-all")
-    public ResponseEntity<?> logoutAll(@RequestBody TokenDTO dto) {
-        String refreshTokenString = dto.getRefreshToken();
-
-        if (jwtHelper.validateRefreshToken(refreshTokenString)
-                && refreshTokenRepository.existsById(jwtHelper.getTokenIdFromRefreshToken(refreshTokenString))) {
-            // valid and exists in db
-
             refreshTokenRepository.deleteByOwner_Id(jwtHelper.getUserIdFromRefreshToken(refreshTokenString));
             return ResponseEntity.ok().build();
         }
@@ -131,6 +116,7 @@ public class AuthController {
                 tokenDTO.setRefreshToken(refreshTokenString);
                 tokenDTO.setRefreshTokenExpiresIn(refreshTokenExpiry);
                 tokenDTO.setUsername(user.getUsername());
+                tokenDTO.setUserId(user.getId());
             } else {
                 throw new BadCredentialsException("invalid token");
             }

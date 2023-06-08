@@ -23,7 +23,7 @@ public class AppointmentService extends AbstractService<Appointment, Appointment
         return this.appointmentRepository;
     }
 
-    public boolean updateAppointment(String id, Appointment appointment) {
+    public Appointment updateAppointment(String id, Appointment appointment) {
         Optional<Appointment> optionalAppointment = this.appointmentRepository.findById(id);
 
         if (optionalAppointment.isPresent()) {
@@ -32,10 +32,9 @@ public class AppointmentService extends AbstractService<Appointment, Appointment
             currentAppointment.setPatient(appointment.getPatient());
             currentAppointment.setDentistName(appointment.getDentistName());
             currentAppointment.setScheduledDate(appointment.getScheduledDate());
-            this.appointmentRepository.save(currentAppointment);
-            return true;
+            return this.appointmentRepository.save(currentAppointment);
         }
 
-        return false;
+        return null;
     }
 }
