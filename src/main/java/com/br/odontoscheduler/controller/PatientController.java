@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/patient")
+@RequestMapping("/api/patient")
 public class PatientController extends AbstractController<Patient, PatientService> {
     private static final Logger logger = LoggerFactory.getLogger(PatientController.class);
 

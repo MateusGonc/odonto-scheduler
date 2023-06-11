@@ -1,6 +1,7 @@
 package com.br.odontoscheduler.model;
 
 import com.br.odontoscheduler.model.base.BaseEntity;
+import com.br.odontoscheduler.model.enums.Gender;
 import lombok.Data;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
@@ -29,6 +30,10 @@ public class Patient extends BaseEntity {
 
     @Indexed(unique = true)
     private String phoneNumber;
+
+    private Gender gender;
+
+    private String notes;
 
     @Indexed(unique = true)
     @NotBlank
