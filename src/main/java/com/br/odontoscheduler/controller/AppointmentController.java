@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/appointment")
+@RequestMapping("/api/appointment")
 public class AppointmentController extends AbstractController<Appointment, AppointmentService> {
 
     private static final Logger logger = LoggerFactory.getLogger(AppointmentController.class);

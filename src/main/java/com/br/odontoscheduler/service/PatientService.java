@@ -68,6 +68,8 @@ public class PatientService extends AbstractService<Patient, PatientRepository> 
             currentPatient.setEmail(patient.getEmail());
             currentPatient.setDocument(patient.getDocument());
             currentPatient.setPhoneNumber(patient.getPhoneNumber());
+            currentPatient.setGender(patient.getGender());
+            currentPatient.setNotes(patient.getNotes());
             currentPatient.setFullName(patient.getFullName());
 
             return this.patientRepository.save(currentPatient);
