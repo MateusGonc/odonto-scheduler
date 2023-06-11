@@ -1,7 +1,7 @@
 package com.br.odontoscheduler.controller.handler;
 
 import com.br.odontoscheduler.dto.ExceptionDTO;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +37,14 @@ public class ControllerAdvice {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ExceptionDTO> IllegalArgumentException(IllegalArgumentException e){
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ExceptionDTO(HttpStatus.BAD_REQUEST, e.getMessage())
+        );
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<ExceptionDTO> DuplicateKeyException(DuplicateKeyException e) {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ExceptionDTO(HttpStatus.BAD_REQUEST, e.getMessage())
