@@ -22,7 +22,6 @@ public class Patient extends BaseEntity {
     @Id
     private String id;
 
-    @Indexed(unique = true)
     private String fullName;
 
     @Indexed(unique = true)
