@@ -1,19 +1,17 @@
-# AS <NAME> to name this stage as maven
-FROM maven:3.6.3 AS maven
+FROM openjdk:8-jdk-alpine
 
-WORKDIR /usr/src/app
-COPY . /usr/src/app
-# Compile and package the application to an executable JAR
-RUN mvn package
+ARG JAR_FILE=target/odontoscheduler-0.0.1-SNAPSHOT.jar
+ARG JAR_LIB_FILE=target/lib/
 
-# For Java 8,
-FROM java:8-jdk
+# cd /usr/local/runme
+WORKDIR /usr/local/runme
 
-ARG JAR_FILE=odontoscheduler-0.0.1-SNAPSHOT.jar
+# copy target/find-links.jar /usr/local/runme/app.jar
+COPY ${JAR_FILE} app.jar
 
-WORKDIR /opt/app
+# copy project dependencies
+# cp -rf target/lib/  /usr/local/runme/lib
+ADD ${JAR_LIB_FILE} lib/
 
-# Copy the spring-boot-api-tutorial.jar from the maven stage to the /opt/app directory of the current stage.
-COPY --from=maven /usr/src/app/target/${JAR_FILE} /opt/app/
-
-ENTRYPOINT ["java","-jar","spring-boot-api-tutorial.jar"]
+# java -jar /usr/local/runme/app.jar
+ENTRYPOINT ["java","-jar","app.jar"]
