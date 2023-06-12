@@ -1,15 +1,19 @@
-FROM ubuntu:latest AS build
+# AS <NAME> to name this stage as maven
+FROM maven:3.6.3 AS maven
 
-RUN apt-get update
-RUN apt-get install openjdk-8-jdk -y
-COPY . .
+WORKDIR /usr/src/app
+COPY . /usr/src/app
+# Compile and package the application to an executable JAR
+RUN mvn package
 
-RUN ./gradlew bootJar --no-daemon
+# For Java 8,
+FROM openjdk-8-jre-headless
 
-FROM openjdk:8-jdk-slim
+ARG JAR_FILE=odontoscheduler-0.0.1-SNAPSHOT.jar
 
-EXPOSE 8080
+WORKDIR /opt/app
 
-COPY --from=build /build/libs/demo-1.jar app.jar
+# Copy the spring-boot-api-tutorial.jar from the maven stage to the /opt/app directory of the current stage.
+COPY --from=maven /usr/src/app/target/${JAR_FILE} /opt/app/
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","spring-boot-api-tutorial.jar"]
