@@ -7,7 +7,7 @@ COPY . /usr/src/app
 RUN mvn package
 
 # For Java 8,
-FROM openjdk-8-jre-headless
+FROM java:8-jdk
 
 ARG JAR_FILE=odontoscheduler-0.0.1-SNAPSHOT.jar
 
