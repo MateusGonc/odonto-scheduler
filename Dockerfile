@@ -1,4 +1,4 @@
-FROM maven:3.8.3-openjdk-17 AS build
+FROM maven:3.8.3-openjdk-8 AS build
 WORKDIR /app
 COPY . /app/
 RUN mvn clean package
@@ -6,7 +6,7 @@ RUN mvn clean package
 #
 # Package stage
 #
-FROM FROM openjdk:8-jdk-alpine
+FROM openjdk:8-jdk-alpine
 WORKDIR /app
 COPY --from=build /app/target/*.jar /app/app.jar
 EXPOSE 8080
