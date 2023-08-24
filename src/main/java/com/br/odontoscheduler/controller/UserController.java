@@ -23,8 +23,7 @@ public class UserController extends AbstractController<User, UserService>{
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable String id,
-                                               @RequestBody User user) {
+    public ResponseEntity<User> update(@PathVariable String id, @RequestBody User user) {
 
         logger.info("updating " + user.toString());
         User updatedUser = this.getService().updateUser(id, user);
