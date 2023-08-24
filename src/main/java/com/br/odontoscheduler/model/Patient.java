@@ -40,7 +40,7 @@ public class Patient extends BaseEntity {
     @Email
     private String email;
 
-    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private Address address;
 }
